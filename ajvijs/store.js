@@ -218,10 +218,10 @@ export class store {
 									}
 								break
 								case 'select':
-									value = el.value
+									value = el.options[el.selctedIndex].value
 								break
 								case 'textarea':
-									value = el.options[el.selctedIndex].value
+									value = el.value
 								break
 							}
 							frmData.append(elid, value)
@@ -455,7 +455,7 @@ export class store {
 		if(!this.paginate || this.page == 1) {
 			return
 		}
-		this.page = this.page - 1
+		this.page = parseInt(this.page) - 1
 		if(this.pageCtrl) {
 			this.pageCtrl.value = this.page
 		}
@@ -476,7 +476,7 @@ export class store {
 			if(e.target.value > Math.ceil(this.paginateData.fill.length / this.paginate)) {
 				e.target.value = Math.ceil(this.paginateData.fill.length / this.paginate)
 			}
-			this.page = e.target.value
+			this.page = parseInt(e.target.value)
 		}
 		let rows = [...this.element.querySelector('tbody, .tablebody').children]
 		rows.forEach(item => item.remove())
@@ -488,7 +488,7 @@ export class store {
 		if(!this.paginate || this.page == Math.ceil(this.paginateData.fill.length / this.paginate)) {
 			return
 		}
-		this.page = this.page + 1
+		this.page = parseInt(this.page) + 1
 		if(this.pageCtrl) {
 			this.pageCtrl.value = this.page
 		}
