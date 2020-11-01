@@ -1,0 +1,36 @@
+
+.row {
+	width: 80%;
+}
+
+.linenumber {
+	max-width: 50px;
+}
+
+.tablehead {
+	display: table-header-group;
+}
+
+.tablehead .tablecell, .tablefoot .tablecell {
+	font-weight: bold;
+	display: table-cell;
+	padding: 3px 10px 3px 10px;
+	white-space: nowrap;
+}
+
+.tablefoot {
+	display: table-footer-group;
+}
+
+.tablebody {
+	display: table-row-group;
+}
+
+.tablerow {
+	display: table-row;
+}
+
+.tablebody .tablecell {
+	display: table-cell;
+	padding: 3px 10px 3px 10px;
+}

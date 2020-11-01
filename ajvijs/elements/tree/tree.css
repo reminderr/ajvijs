@@ -1,0 +1,98 @@
+
+:root {
+	--height: 50px;
+}
+
+ul[tree] {	
+	position: relative;
+	padding: 0px;
+	list-style-type: none;
+	width: 100%;
+	margin-left: 20px;
+}
+
+ul[tree]::after {
+	content: "";
+  	border-left: 1px dotted #cccccc;
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	height: var(--height);
+  	width: 1px;
+}
+
+ul[tree] li {	
+	position: relative;
+	display: flex;
+	width: 100%;
+}
+
+ul[tree] li span:last-child {
+	white-space: nowrap;
+	font-size: 14px;
+}
+
+.selectedTreeItem {
+	color: #6799d1;
+}
+
+.closable {
+	position: absolute;
+	z-index: 99999;
+	width: 10px !important;
+	height: 10px !important;
+	left: -5px;
+	top: 7px;
+	font-size: small;
+	line-height: 10px !important;
+	color: #999999;
+	cursor: pointer;
+	background-color: #efefef;
+}
+
+.liexpanded {
+	background-image: url('assets/tree/expanded.png');
+	width: 10px;
+	height: 10px;
+	margin: 5px 0px 0px -4px;
+	cursor: pointer;
+}
+
+.licollapsed {
+	background-image: url('assets/tree/collapsed.png');
+	width: 10px;
+	height: 10px;
+	margin: 5px 0px 0px -4px;
+	cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
