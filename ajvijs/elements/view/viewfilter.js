@@ -26,8 +26,8 @@ export class viewfilter {
 	}
 
 	applyFilter(thead, e) {
-		this.cellindex = parseInt(thead.getAttribute('data-index'))
-		this.datakey = thead.getAttribute('data-key')
+		this.cellindex = parseInt(thead.dataset.index)
+		this.datakey = thead.dataset.key
 		this.event = e
 		document.querySelector('.viewfilter') && document.querySelector('.viewfilter').remove()
 		this.container = document.createElement('div')

@@ -14,6 +14,28 @@ export class ajvi extends events {
 		if(obj && obj.scope) {
 			this[obj.scope.constructor.name] = obj.scope
 		}
+		this.setProto()
+	}
+
+	setProto() {
+		HTMLElement.prototype.Scope = this
+		HTMLElement.prototype.At = this.appendTo
+		HTMLElement.prototype.AtFirst = this.appendFirst
+		HTMLElement.prototype.AtLast = this.appendLast
+		HTMLElement.prototype.AtBeforeStart = this.appendBefore
+		HTMLElement.prototype.AtAfterEnd = this.appendAfter
+		HTMLElement.prototype.Before = this.before
+		HTMLElement.prototype.Replace = this.replace
+		HTMLElement.prototype.Id = this.setId
+		HTMLElement.prototype.Html = this.setHtml
+		HTMLElement.prototype.Style = this.setStyle
+		HTMLElement.prototype.Css = this.setCss
+		HTMLElement.prototype.CssRemove = this.removeCss
+		HTMLElement.prototype.CssContain = this.containsCss
+		HTMLElement.prototype.Store = this.setElementStore
+		HTMLElement.prototype.SetEvent = this.setElementEvent
+		HTMLElement.prototype.UnsetEvent = this.unsetElementEvent
+		HTMLElement.prototype.OverwriteEvent = this.overwriteElementEvent
 	}
 
 	init() {
@@ -149,6 +171,140 @@ export class ajvi extends events {
 			cont.innerHTML = this.getTemplate().body.innerHTML
 			resolve(this.applyEvents(dom))
 		})
+	}
+
+	appendTo(el) {
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).appendChild(this)
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).appendChild(this)
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.appendChild(this)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).appendChild(this)
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).appendChild(this)
+			}
+		}
+		return this
+	}
+
+	appendBefore(el) {
+		el.insertAdjacentElement('beforebegin', this)
+	}
+
+	appendFirst(el) {
+		el.insertAdjacentElement('afterbegin', this)
+	}
+
+	appendLast(el) {
+		el.insertAdjacentElement('beforeend', this)
+	}
+
+	appendAfter(el) {
+		el.insertAdjacentElement('afterend', this)
+	}
+
+	before(el) {
+		el.parentNode.insertBefore(this, el)
+	}
+
+	replace(el) {
+		el.parentNode.replaceChild(this, el)
+	}
+
+	setId(id) {
+		if(!id) {
+			return this.id
+		}
+		this.id = id
+		return this
+	}
+
+	setHtml(html) {
+		if(!html) {
+			return this.innerHTML
+		}
+		this.innerHTML = html
+		return this
+	}
+
+	setStyle(style) {
+		if(!style) {
+			return this.style
+		}
+		Object.keys(style).forEach(prop => this.style[prop] = style[prop])
+		return this
+	}
+
+	setCss(css) {
+		if(!css) {
+			return this.classList
+		}
+		this.classList.add(css)
+		return this
+	}
+
+	removeCss(css) {
+		if(this.classList.contains(css)) {
+			this.classList.remove(css)
+		}
+		return this
+	}
+
+	containsCss(css) {
+		return this.classList.contains(css)
+	}
+
+	setElementStore(store) {
+		if(!store) {
+			return this.StoreModel
+		}
+		this.StoreModel = store
+	}
+
+	setElementEvent(event, handler) {
+		this.Scope.setEvent(this, event, handler)
+		return this
+	}
+
+	unsetElementEvent(event) {
+		this.Scope.unsetEvent(this, event)
+		return this
+	}
+
+	overwriteElementEvent(event, handler) {
+		this.Scope.overwriteEvent(this, event, handler)
+		return this
+	}
+
+	Tag(node) {
+		return document.createElement(node)
+	}
+
+	View(el, attrs) {		
+		this[attrs['name']] = el		
+		if(attrs['store']) {
+			let store = this.setStore(attrs['store'])
+			store.applyStore()
+			this[attrs['name']].Store(store.data)
+			this[attrs['then']]()			
+		}
 	}
 
 	setStore(target) {

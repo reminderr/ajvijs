@@ -26,10 +26,15 @@ export class store {
 			this.domhub = new domhub(this.element, this.scope)
 			this.paginate = this.element.hasAttribute('paginate') ? this.element.getAttribute('paginate') : null
 		} else {
-			this.variable = Object.keys({target})[0]
+			this.variable = Object.values({target})[0]
+			this.storeName = this.variable
 			this.scope.store[this.variable] = this
 		}		
 		return this
+	}
+
+	applyStore() {
+		typeof this.scope[this.storeName] == 'function' && this.scope[this.storeName](this)
 	}
 
 	applyStoreToDOM() {	 						
@@ -128,6 +133,10 @@ export class store {
 	fillData(data) {
 		this.data.fill = data
 		this.dataOrig.fill = data
+		if(!this.element) {
+			typeof this.scope.dataLoad == 'function' && this.scope.dataLoad()
+			return
+		}
 		this.domhub.createFromStore(this.element.tagName, this.paginate ? this.data.fill.paginate(this.page, this.paginate).data : data, this).then(() => {
 			this.setStoreActions()
 		})
