@@ -32,7 +32,7 @@ export class events {
 			'beforehide', 'hide', 'afterhide'
 		]	
 
-		this.observer = new MutationObserver(mutations => mutations.forEach(mutation => this.observableEventQueue(mutation, this.observable[mutation.target.getAttribute('own')])))
+		this.observer = new MutationObserver(mutations => mutations.forEach(mutation => this.observableEventQueue(mutation, this.observable[mutation.target.Own()])))
 
  		this.observerConfig = { 
  			childList: true, 
@@ -51,15 +51,6 @@ export class events {
 	}
 
 	/*
-	 * @desc Set element owner
-	 * @param (object) el - DOM element
-	 * @return void
-	 */
-	setOwner(el) {
-		return el.setAttribute('own', el.tagName.toLowerCase().replace(/(a|e|i|o|u|)/gi, '').replace(/[^\w\s]|(.)(?=\1)/gi, '')+Math.random().toString().split('.')[1])
-	}
-
-	/*
 	 * @desc Get event list per owner
 	 * @param (object) htmlcollection - DOM elements
 	 * @return void
@@ -68,15 +59,15 @@ export class events {
 		let evts, collect = [], own, o, elevts
 		for(let el of htmlcollection) {
 			if(typeof el.getAttribute('store') == 'string') {
-				!el.getAttribute('own') && setOwner(el)
+				!el.Own() && el.Own(setOwner(el))
 				let _store = new store(el, this)
-				this.store[el.getAttribute('own')] = _store
+				this.store[el.Own()] = _store
 				_store.applyStoreToDOM() 
 			}
-			if(typeof el.getAttribute('events') == 'string' || typeof el.getAttribute('own') == 'string') {
+			if(typeof el.getAttribute('events') == 'string' || typeof el.Own() == 'string') {
 				elevts = el.getAttribute('events')
-				!el.getAttribute('own') && setOwner(el)
-				own = el.getAttribute('own')
+				!el.Own() && el.Own(setOwner(el))
+				own = el.Own()
 				if(!Array.isArray(this.collectEventsOrig[own])) {
 					this.collectEventsOrig[own] = []
 				}
@@ -157,7 +148,7 @@ export class events {
 	restoreEvents(el) {
 		let own, htmlcollect = el ? [el] : this.getTag('*', this.getTemplate().body)
 		for(let el of htmlcollect) {
-			own = el.getAttribute('own')
+			own = el.Own()
 			if(this.collectEvents[own] == undefined) {
 				continue
 			}
@@ -184,7 +175,7 @@ export class events {
 			throw 'Event '+ev.toUpperCase()+' does not exist.'
 			return
 		}
-		let own = el.getAttribute('own')
+		let own = el.Own()
 		if(!own) {
 			return false
 		}
@@ -222,7 +213,7 @@ export class events {
 	 * @return void
 	 */
 	triggerEvent(obj, ev) {
-		let own = el.getAttribute('own')
+		let own = el.Own()
 		own && this.collectEventsOrig[own][ev].fn()
 	}
 
@@ -239,8 +230,8 @@ export class events {
 			throw 'Event '+ev+' does not exist.'
 			return
 		}
-		!el.getAttribute('own') && setOwner(el)
-		let evt = ev.toLowerCase(), own = el.getAttribute('own')
+		!el.Own() && el.Own(setOwner(el))
+		let evt = ev.toLowerCase(), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
 			case (evt.match(/click/) || {}).input:
@@ -301,7 +292,7 @@ export class events {
 	 * @return void
 	 */
 	overwriteEvent(el, ev, fn) {
-		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.getAttribute('own')
+		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
 			case (evt.match(/click/) || {}).input:
@@ -356,7 +347,7 @@ export class events {
 			throw 'Event '+ev+' does not exist.'
 			return
 		}
-		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.getAttribute('own')
+		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
 			case (evt.match(/click/) || {}).input:
@@ -517,7 +508,7 @@ export class events {
 	 * @return void
 	 */
 	observableEventQueue(mutation, el) {
-	    let own = el.getAttribute('own'), ev = this.observableEventType(mutation, own), evts = this.collectEventsOrig[own], execfn	    
+	    let own = el.Own(), ev = this.observableEventType(mutation, own), evts = this.collectEventsOrig[own], execfn	    
 	    if(!this.collectEventsOrig[own]) {
 	    	return
 	    }

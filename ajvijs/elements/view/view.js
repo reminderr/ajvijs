@@ -246,12 +246,12 @@ export class view {
 							this.viewfilter = new viewfilter(this.scope, this.element, this.columnRules, e.target, e)
 						}
 					})
-					this.scope.setEvent(theadchildrens[thindex].querySelector('#filter_'+thindex), 'click', (s, o, e) => {
+					theadchildrens[thindex].querySelector('#filter_'+thindex).addEventListener('click', e => {
 						e.stopPropagation()
 						if(this.viewfilter instanceof viewfilter) {
-							this.viewfilter.applyFilter(e.target.parentNode, e)
+							this.viewfilter.applyFilter(e.target.parentNode.parentNode, e)
 						} else {
-							this.viewfilter = new viewfilter(this.scope, this.element, this.columnRules, e.target.parentNode, e)
+							this.viewfilter = new viewfilter(this.scope, this.element, this.columnRules, e.target.parentNode.parentNode, e)
 						}
 					})
 				}
@@ -260,7 +260,7 @@ export class view {
 		}			
 		let ic = parseInt(this.element.getAttribute('paginate')) 
 		this.data.forEach(obj => {
-			this.scope.keys[this.element.getAttribute('own')] = []
+			this.scope.keys[this.element.Own()] = []
 			let i = 0, firstCell = true, fields = {}
 			clonedrow = row.cloneNode(true)		
 			if(!this.baseRow) {
@@ -298,7 +298,7 @@ export class view {
 					}
 				} 
 				let re = new RegExp('{{'+Object.keys(obj)[i]+'}}'), cellindex = 0
-				this.scope.keys[this.element.getAttribute('own')].push(Object.keys(obj)[i])
+				this.scope.keys[this.element.Own()].push(Object.keys(obj)[i])
 				fields[Object.keys(obj)[i]] = item					
 				Object.keys(clonedrow.children).forEach(cell => {
 					this.replacePlaceholder(clonedrow.children[cell], obj, re, item, countrows, cellindex)	
@@ -460,7 +460,7 @@ export class view {
 				store.setStoreActions(cloned.children[i])
 				return
 			}
-			cloned.children[i].firstElementChild.hasAttribute('own') && cloned.children[i].firstElementChild.removeAttribute('own')
+			cloned.children[i].firstElementChild.Own() && cloned.children[i].firstElementChild.Own(' ')
 			let rules = Object.values(this.columnRules.rules)[count]
 			if(rules.type && rules.type.toLowerCase() == 'list') {						
 				cloned.children[i].firstElementChild.innerHTML = Object.values(rules.items)[0]
@@ -479,7 +479,7 @@ export class view {
 		})
 		if(cloned.querySelector('['+store.storeName+']') && cloned.querySelector('['+store.storeName+']').getAttribute(store.storeName).toLowerCase() == 'delete') {
 			let el = cloned.querySelector('['+store.storeName+']')
-			el.removeAttribute('own')
+			el.Own(' ')
 			!this.scope.hasEvent(el, 'click') && this.scope.setEvent(el, 'click', (s, o, e) => {
 				e.stopPropagation()
 				return store.Delete(e)

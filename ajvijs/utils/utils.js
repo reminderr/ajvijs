@@ -153,5 +153,5 @@ export const timeToInt = time => {
 }
 
 export const setOwner = el => {
-    return el.setAttribute('own', el.tagName.toLowerCase().replace(/(a|e|i|o|u|)/gi, '').replace(/[^\w\s]|(.)(?=\1)/gi, '')+Math.random().toString().split('.')[1])
+    return el.tagName.toLowerCase().replace(/(a|e|i|o|u|)/gi, '').replace(/[^\w\s]|(.)(?=\1)/gi, '')+Math.random().toString().split('.')[1]
 }

@@ -19,10 +19,10 @@ export class store {
 		if(target instanceof Element) {
 			this.storeName = target.getAttribute('store')
 			this.element = target
-			if(!target.getAttribute('own')) {
-				setOwner(target)
+			if(!target.Own()) {
+				target.Own(setOwner(target))
 			}
-			this.scope.store[target.getAttribute('own')] = this
+			this.scope.store[target.Own()] = this
 			this.domhub = new domhub(this.element, this.scope)
 			this.paginate = this.element.hasAttribute('paginate') ? this.element.getAttribute('paginate') : null
 		} else {
@@ -133,6 +133,7 @@ export class store {
 	fillData(data) {
 		this.data.fill = data
 		this.dataOrig.fill = data
+		this.paginateData.fill = data
 		if(!this.element) {
 			typeof this.scope.dataLoad == 'function' && this.scope.dataLoad()
 			return

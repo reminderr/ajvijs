@@ -21,7 +21,7 @@ export class tree {
 		if(this.element && this.element.hasAttribute('id')) {
 			this.container.setAttribute('id', this.element.getAttribute('id'))
 		} else {
-			setOwner(this.container)
+			this.container.Own(setOwner(this.container))
 		}		
 		this.container.style.width = '100%'
 		this.container.style.height = '100%'

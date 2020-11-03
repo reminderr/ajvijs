@@ -36,6 +36,14 @@ export class ajvi extends events {
 		HTMLElement.prototype.SetEvent = this.setElementEvent
 		HTMLElement.prototype.UnsetEvent = this.unsetElementEvent
 		HTMLElement.prototype.OverwriteEvent = this.overwriteElementEvent
+		HTMLElement.prototype.State = this.setState
+		HTMLElement.prototype.Container = this.setContainer
+		HTMLElement.prototype.Parent = this.getParent
+		HTMLElement.prototype.Childrens = this.getChildrens
+		HTMLElement.prototype.Prev = this.getPrevSibling
+		HTMLElement.prototype.Next = this.getNextSibling
+		HTMLElement.prototype.Selector = this.getSelector
+		HTMLElement.prototype.Own = this.setOwner
 	}
 
 	init() {
@@ -71,7 +79,7 @@ export class ajvi extends events {
 			throw 'This component has no store object '+store+'.'
 			return
 		}
-		let own = elstore.getAttribute('own')
+		let own = elstore.Own()
 		if(!own) {
 			throw 'This element has no store object.'
 			return
@@ -80,7 +88,7 @@ export class ajvi extends events {
 	}
 
 	getStoreByDOM(el) {
-		let own = el.getAttribute('own')
+		let own = el.Own()
 		if(!own) {
 			throw 'This element has no store object.'
 			return
@@ -205,27 +213,189 @@ export class ajvi extends events {
 	}
 
 	appendBefore(el) {
-		el.insertAdjacentElement('beforebegin', this)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).insertAdjacentElement('beforebegin', this)
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).insertAdjacentElement('beforebegin', this)
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertAdjacentElement('beforebegin', this)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).insertAdjacentElement('beforebegin', this)
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).insertAdjacentElement('beforebegin', this)
+			}
+		}
+		return this		
 	}
 
 	appendFirst(el) {
-		el.insertAdjacentElement('afterbegin', this)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).insertAdjacentElement('afterbegin', this)
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).insertAdjacentElement('afterbegin', this)
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertAdjacentElement('afterbegin', this)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).insertAdjacentElement('afterbegin', this)
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).insertAdjacentElement('afterbegin', this)
+			}
+		}
+		return this	
 	}
 
 	appendLast(el) {
-		el.insertAdjacentElement('beforeend', this)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).insertAdjacentElement('beforeend', this)
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).insertAdjacentElement('beforeend', this)
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertAdjacentElement('beforeend', this)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).insertAdjacentElement('beforeend', this)
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).insertAdjacentElement('beforeend', this)
+			}
+		}
+		return this	
 	}
 
 	appendAfter(el) {
-		el.insertAdjacentElement('afterend', this)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).insertAdjacentElement('afterend', this)
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).insertAdjacentElement('afterend', this)
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertAdjacentElement('afterend', this)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).insertAdjacentElement('afterend', this)
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).insertAdjacentElement('afterend', this)
+			}
+		}
+		return this	
 	}
 
 	before(el) {
-		el.parentNode.insertBefore(this, el)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).insertBefore(this, document.getElementById(el))
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).insertBefore(this, document.querySelector(el))
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertBefore(this, el)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).insertBefore(this, document.getElementById(el))
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).insertBefore(this, document.querySelector(el))
+			}
+		}
+		return this
 	}
 
 	replace(el) {
-		el.parentNode.replaceChild(this, el)
+		if(document.readyState != 'complete') {
+			window.addEventListener('load', e => {	
+				if(el instanceof Element) {
+					el.appendChild(this)
+					return this
+				}
+				if(document.getElementById(el)) {
+					document.getElementById(el).parentNode.replaceChil(this, document.getElementById(el))
+					return this
+				}
+				if(document.querySelector(el)) {
+					document.querySelector(el).parentNode.replaceChil(this, document.querySelector(el))
+				}
+			})
+		} else {
+			if(el instanceof Element) {
+				el.insertBefore(this, el)
+				return this
+			}
+			if(document.getElementById(el)) {
+				document.getElementById(el).parentNode.replaceChil(this, document.getElementById(el))
+				return this
+			}
+			if(document.querySelector(el)) {
+				document.querySelector(el).parentNode.replaceChil(this, document.querySelector(el))
+			}
+		}
+		return this
 	}
 
 	setId(id) {
@@ -276,6 +446,7 @@ export class ajvi extends events {
 			return this.StoreModel
 		}
 		this.StoreModel = store
+		return this
 	}
 
 	setElementEvent(event, handler) {
@@ -293,6 +464,51 @@ export class ajvi extends events {
 		return this
 	}
 
+	setState(state) {
+		if(!state) {
+			return this.ElementState
+		}
+		this.ElementState = state
+		return this
+	}
+
+	setContainer(el) {
+		if(!el) {
+			return this.parentNode
+		}
+		let container = el		
+		this.parentNode.replaceChild(container, this)
+		container.appendChild(this)
+		return this
+	}
+
+	getParent() {
+		return this.parentElement
+	}
+
+	getChildrens() {
+		return [...this.children]
+	}
+
+	getPrevSibling() {
+		return this.previousElementSibling
+	}
+
+	getNextSibling() {
+		return this.nextElementSibling
+	}
+
+	getSelector(selector) {
+		return this.querySelector(selector)
+	}
+
+	setOwner(own) {
+		if(!own) {
+			return this.Owner
+		}
+		this.Owner = own
+	}
+
 	Tag(node) {
 		return document.createElement(node)
 	}
@@ -302,7 +518,7 @@ export class ajvi extends events {
 		if(attrs['store']) {
 			let store = this.setStore(attrs['store'])
 			store.applyStore()
-			this[attrs['name']].Store(store.data)
+			this[attrs['name']].Store(store)
 			this[attrs['then']]()			
 		}
 	}

@@ -10,7 +10,7 @@ export class viewfilter {
 		this.cellindexln = this.element.hasAttribute('linenumber') ? 1 : 0
 		this.column = rules
 		this.scope = scope	
-		this.keys = this.scope.keys[this.element.getAttribute('own')]
+		this.keys = this.scope.keys[this.element.Own()]
 		this.data = [].concat(this.scope.getStoreByDOM(this.element).data.fill)	
 		this.store = this.scope.getStoreByDOM(this.element)
 		if(!Array.isArray(this.filter)) {
