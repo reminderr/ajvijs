@@ -407,7 +407,7 @@ export class ajvi extends events {
 	}
 
 	setHtml(html) {
-		if(!html) {
+		if(html == undefined) {
 			return this.innerHTML
 		}
 		this.innerHTML = html
@@ -415,7 +415,7 @@ export class ajvi extends events {
 	}
 
 	setStyle(style) {
-		if(!style) {
+		if(style == undefined) {
 			return this.style
 		}
 		Object.keys(style).forEach(prop => this.style[prop] = style[prop])
@@ -423,7 +423,7 @@ export class ajvi extends events {
 	}
 
 	setCss(css) {
-		if(!css) {
+		if(css == undefined) {
 			return this.classList
 		}
 		this.classList.add(css)
@@ -442,7 +442,7 @@ export class ajvi extends events {
 	}
 
 	setElementStore(store) {
-		if(!store) {
+		if(store == undefined) {
 			return this.StoreModel
 		}
 		this.StoreModel = store
@@ -465,7 +465,7 @@ export class ajvi extends events {
 	}
 
 	setState(state) {
-		if(!state) {
+		if(state == undefined) {
 			return this.ElementState
 		}
 		this.ElementState = state
@@ -473,7 +473,7 @@ export class ajvi extends events {
 	}
 
 	setContainer(el) {
-		if(!el) {
+		if(el == undefined) {
 			return this.parentNode
 		}
 		let container = el		
@@ -503,7 +503,7 @@ export class ajvi extends events {
 	}
 
 	setOwner(own) {
-		if(!own) {
+		if(own == undefined) {
 			return this.Owner
 		}
 		this.Owner = own
