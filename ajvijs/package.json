@@ -1,13 +1,13 @@
 {
   "_args": [
     [
-      "ajvijs@1.0.1579",
+      "ajvijs@1.0.1580",
       "C:\\wamp64\\www\\elements"
     ]
   ],
   "_development": true,
-  "_from": "ajvijs@1.0.1579",
-  "_id": "ajvijs@1.0.1579",
+  "_from": "ajvijs@1.0.1580",
+  "_id": "ajvijs@1.0.1580",
   "_inBundle": false,
   "_integrity": "sha512-EIO5/5iubPpA9T8Ksqf8iOkTzE43n7W5Kvodma5G91d2qoraAXWmaa/bwksm66SGOYPY/5lkxCHW4n9itBfSeQ==",
   "_location": "/ajvijs",
@@ -15,18 +15,18 @@
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "ajvijs@1.0.1579",
+    "raw": "ajvijs@1.0.1580",
     "name": "ajvijs",
     "escapedName": "ajvijs",
-    "rawSpec": "1.0.1579",
+    "rawSpec": "1.0.1580",
     "saveSpec": null,
-    "fetchSpec": "1.0.1579"
+    "fetchSpec": "1.0.1580"
   },
   "_requiredBy": [
     "#DEV:/"
   ],
-  "_resolved": "https://registry.npmjs.org/ajvijs/-/ajvijs-1.0.1579.tgz",
-  "_spec": "1.0.1579",
+  "_resolved": "https://registry.npmjs.org/ajvijs/-/ajvijs-1.0.1580.tgz",
+  "_spec": "1.0.1580",
   "_where": "C:\\wamp64\\www\\elements",
   "author": {
     "name": "Sven Macolic"
@@ -41,5 +41,5 @@
   "dependencies": {
     "tail.datetime": "^0.4.13" 
   },
-  "version": "1.0.1579"
+  "version": "1.0.1580"
 }

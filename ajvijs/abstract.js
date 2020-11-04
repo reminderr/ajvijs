@@ -37,13 +37,14 @@ export class ajvi extends events {
 		HTMLElement.prototype.UnsetEvent = this.unsetElementEvent
 		HTMLElement.prototype.OverwriteEvent = this.overwriteElementEvent
 		HTMLElement.prototype.State = this.setState
-		HTMLElement.prototype.Container = this.setContainer
+		HTMLElement.prototype.Wrap = this.setContainer
 		HTMLElement.prototype.Parent = this.getParent
 		HTMLElement.prototype.Childrens = this.getChildrens
 		HTMLElement.prototype.Prev = this.getPrevSibling
 		HTMLElement.prototype.Next = this.getNextSibling
 		HTMLElement.prototype.Selector = this.getSelector
 		HTMLElement.prototype.Own = this.setOwner
+		HTMLElement.prototype.Index = this.getElementIndex
 	}
 
 	init() {
@@ -500,6 +501,11 @@ export class ajvi extends events {
 
 	getSelector(selector) {
 		return this.querySelector(selector)
+	}
+
+	getElementIndex() {
+		let parent = this.parentNode
+		return Array.from(parent.children).indexOf(this)
 	}
 
 	setOwner(own) {
