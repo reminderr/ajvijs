@@ -27,5 +27,5 @@ https://codesandbox.io/s/ajvijs-simple-mvc-with-pagination-4nb8f
 React implementation of TreeView with editable and drag drop options<br>
 https://codesandbox.io/s/ajvijs-react-treeview-vl0rf
 
-React implementation of DataView with editable option with Tail.DateTime hosted calendar<br>
+React implementation of DataView with editable option and Tail.DateTime hosted calendar<br>
 https://codesandbox.io/s/ajvijs-react-dataview-gtgw9
