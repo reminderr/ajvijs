@@ -33,6 +33,7 @@ export class ajvi extends events {
 		HTMLElement.prototype.CssRemove = this.removeCss
 		HTMLElement.prototype.CssContain = this.containsCss
 		HTMLElement.prototype.Store = this.setElementStore
+		HTMLElement.prototype.HasEvent = this.getElementEvent
 		HTMLElement.prototype.SetEvent = this.setElementEvent
 		HTMLElement.prototype.UnsetEvent = this.unsetElementEvent
 		HTMLElement.prototype.OverwriteEvent = this.overwriteElementEvent
@@ -453,6 +454,10 @@ export class ajvi extends events {
 	setElementEvent(event, handler) {
 		this.Scope.setEvent(this, event, handler)
 		return this
+	}
+
+	getElementEvent(event) {
+		return this.Scope.hasEvent(this, event)
 	}
 
 	unsetElementEvent(event) {
