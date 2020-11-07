@@ -16,60 +16,43 @@ export class tree {
 		}
 		if(element) {
 			this.element = element	
-		}		
-		this.container = document.createElement('div')
-		if(this.element && this.element.hasAttribute('id')) {
-			this.container.setAttribute('id', this.element.getAttribute('id'))
-		} else {
-			this.container.Own(setOwner(this.container))
-		}		
-		this.container.style.width = '100%'
-		this.container.style.height = '100%'
-		this.container.style.overflow = 'auto'
-		this.container.setAttribute('data-type', 'tree')
+		}			
+		this.view = document.createElement('div')	
+		this.view.style.width = '100%'
+		this.view.style.height = '100%'
+		this.view.style.overflow = 'auto'
 		this.checked = []
 		if(!options) {
 			return
-		}		
+		}	
 		this.options = options
-		this.options.id && this.container.setAttribute('id', this.options.id)
-		this.options.store && this.container.setAttribute('store', this.options.store)
-		this.options.targetstore && this.container.setAttribute('targetstore', this.options.targetstore)
-		this.options.autoload && this.container.setAttribute('autoload', '')
-		this.options.cross && this.container.setAttribute('cross', '')
-		this.options.arrows && this.container.setAttribute('arrows', '')
-		this.options.lines && this.container.setAttribute('lines', '')
-		this.options.editable && this.container.setAttribute('editable', '')
-		this.options.draggable && this.container.setAttribute('draggable', '')
-		this.options.expanded && this.container.setAttribute('expanded', '')
-		this.options.checkboxes && this.container.setAttribute('checkboxes', '')
-		this.options.assync && this.container.setAttribute('assync', '')
-		this.insertTree()
+		if(!this.options.cross && !this.options.arrows) {
+			this.expanded = 'crossexpanded'
+			this.collapsed = 'crosscollapsed'
+		} 
+		if(this.options.cross && !this.options.arrows) {
+			this.expanded = 'crossexpanded'
+			this.collapsed = 'crosscollapsed'
+		} 
+		if(!this.options.cross && this.options.arrows) {
+			this.expanded = 'arrowexpanded'
+			this.collapsed = 'arrowcollapsed'
+		} 
 		this.applyStore()
-		return this		
-	}
-
-	insertTree() {
-		let el
-		if(this.options.container instanceof Element) {
-			el = this.options.container
-		} else {
-			if(!document.querySelector('['+this.options.container+'=""]')) {
-				el = this.scope.getId(this.options.container)
-			} else {
-				el = document.querySelector('['+this.options.container+'=""]')			
-			}
-		}
-		if(el.id) {
-			this.container.id = el.id
-			el.removeAttribute('id')
-		}
-		el.appendChild(this.container)
+		return this	
 	}
 
 	applyStore() {
-		this.store = this.scope.setStore(this.container, this.scope)
-		this.store.applyStoreToDOM() 
+		this.store = this.scope.setStore(this.options.store)
+		this.store.applyStore()
+		this.store.Fill().then(data => {
+			this.data = data
+			this.setItemsId(data)
+			this.setTree(this.view, data)
+		}).then(() => {
+			this.calculateDashed(this.view.firstElementChild, this.data)
+			typeof this.treeOnLoad == 'function' && this.treeOnLoad(this.store)
+		})
 	}
 
 	createTreeFromStore() {
@@ -83,8 +66,8 @@ export class tree {
 		this.options.expanded = this.element.hasAttribute('expanded') || this.element.getAttribute('expanded') == 'true' ? true : false
 		this.options.checkboxes = this.element.hasAttribute('checkboxes') || this.element.getAttribute('checkboxes') == 'true' ? true : false
 		this.options.assync = this.element.hasAttribute('assync') || this.element.getAttribute('assync') == 'true' ? true : false
-		this.imgpath = this.element.hasAttribute('imgpath') ? this.element.getAttribute('imgpath') : 'assets/tree/'
-		this.imgstatic  = this.element.hasAttribute('imgstatic') ? this.element.getAttribute('imgstatic').split(',') : ['fo.png', 'fc.png']
+		this.options.imgpath = this.element.hasAttribute('imgpath') ? this.element.getAttribute('imgpath') : 'assets/tree/'
+		this.options.imgstatic  = this.element.hasAttribute('imgstatic') ? this.element.getAttribute('imgstatic').split(',') : ['fo.png', 'fc.png']
 		if(!this.element.hasAttribute('cross') && !this.element.hasAttribute('arrows')) {
 			this.expanded = 'crossexpanded'
 			this.collapsed = 'crosscollapsed'
@@ -97,22 +80,22 @@ export class tree {
 			this.expanded = 'arrowexpanded'
 			this.collapsed = 'arrowcollapsed'
 		} 
-		this.container.id = this.element.id
+		this.view.id = this.element.id
 		this.element.removeAttribute('id')
-		this.element.removeAttribute('ata-type')
+		this.element.removeAttribute('data-type')
 		let create = new Promise((res, rej) => {			
 			this.setItemsId(this.data)
-			this.element.appendChild(this.container)
-			res(this.setTree(this.container, this.data)			)
+			this.element.appendChild(this.view)
+			res(this.setTree(this.view, this.data)			)
 		})
 		create.then(() => {
-			this.calculateDashed(this.container.firstElementChild, this.data)
+			this.calculateDashed(this.view.firstElementChild, this.data)
 			typeof this.treeOnLoad == 'function' && this.treeOnLoad(this.store)
 		})
 	}
 
 	cloneTree(obj) {
-		let cloned = obj.container.cloneNode(true)
+		let cloned = obj.view.cloneNode(true)
 		let li = cloned.querySelectorAll('li:not([lis="true"])')
 		this.cloned = cloned.querySelector('[leaf="true"]')
 		li.forEach(item => {
@@ -160,10 +143,10 @@ export class tree {
 			this.options.context && item.addEventListener('contextmenu', this.itemContext.bind(this))
 		})
 		let nodes = [...cloned.children]
-		nodes.forEach(node => this.container.appendChild(node))
+		nodes.forEach(node => this.view.appendChild(node))
 		this.setAllUnchecked()
 		this.collapseAll()
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.calculateDashed(this.view.firstElementChild, this.data)
 	}
 
 	setTree(node, data, rec) {
@@ -209,7 +192,7 @@ export class tree {
 					img.style.height = '14px'
 					img.style.top = '6px'
 					img.style.left = this.options.checkboxes ? '35px' : '15px'
-					img.src = item.expanded ? this.imgpath+this.imgstatic[0] : this.imgpath+this.imgstatic[1]
+					img.src = item.expanded ? this.options.imgpath+this.options.imgstatic[0] : this.options.imgpath+this.options.imgstatic[1]
 					if(this.options.draggable) {
 						li.addEventListener('drop', this.itemDrop.bind(this))
 						li.addEventListener('dragover', this.itemDragOver.bind(this))
@@ -218,13 +201,13 @@ export class tree {
 					iconpresent = true
 				} else {
 					let hasicon = false, iconel
-					if(item.icon || this.imgstatic[2]) {
+					if(item.icon || this.options.imgstatic[2]) {
 						if(item.icon) {
 							hasicon = true
 							if(item.icon && item.icon.match(/(gif|png)/i)) {
 								iconel = document.createElement('img')
 								iconel.classList.add('treeicon')							
-								iconel.src = this.imgpath+item.icon
+								iconel.src = this.options.imgpath+item.icon
 							} 
 							if(item.icon && item.icon.match(/^(\<span|\<i)/i)) {
 								let parser = new DOMParser
@@ -232,15 +215,15 @@ export class tree {
 							}
 							iconpresent = true
 						}
-						if(this.imgstatic[2] && !hasicon) {
-							if(this.imgstatic[2] && this.imgstatic[2].match(/(gif|png)/i)) {
+						if(this.options.imgstatic[2] && !hasicon) {
+							if(this.options.imgstatic[2] && this.options.imgstatic[2].match(/(gif|png)/i)) {
 								iconel = document.createElement('img')
 								iconel.classList.add('treeicon')							
-								iconel.src = this.imgpath+this.imgstatic[2]
+								iconel.src = this.options.imgpath+this.options.imgstatic[2]
 							} 
-							if(this.imgstatic[2] && this.imgstatic[2].match(/^(\<span|\<i)/i)) {
+							if(this.options.imgstatic[2] && this.options.imgstatic[2].match(/^(\<span|\<i)/i)) {
 								let parser = new DOMParser
-								iconel = parser.parseFromString(this.imgstatic[2], 'text/html').documentElement.lastElementChild.firstElementChild
+								iconel = parser.parseFromString(this.options.imgstatic[2], 'text/html').documentElement.lastElementChild.firstElementChild
 							}							
 						}
 						iconel.style.width = '16px'
@@ -285,7 +268,7 @@ export class tree {
 					this.setTree(lis, item.items, ++rec)
 					ul.appendChild(lis)
 				}
-				this.options.editable && new editableTree(this.scope, this.store, this.container, span, item.text, this)
+				this.options.editable && new editableTree(this.scope, this.store, this.view, span, item.text, this)
 			})
 			node.appendChild(ul)	
 			res(true)
@@ -298,18 +281,18 @@ export class tree {
 			e.target.classList.remove(this.collapsed)
 			e.target.classList.add(this.expanded)
 			if(this.options.checkboxes) {
-				e.target.nextElementSibling.nextElementSibling.nextElementSibling.src = this.imgpath+this.imgstatic[0]
+				e.target.nextElementSibling.nextElementSibling.nextElementSibling.src = this.options.imgpath+this.options.imgstatic[0]
 			} else {
-				e.target.nextElementSibling.nextElementSibling.src = this.imgpath+this.imgstatic[0]
+				e.target.nextElementSibling.nextElementSibling.src = this.options.imgpath+this.options.imgstatic[0]
 			}
 			this.expandItem(e.target.parentNode)						
 		} else {
 			e.target.classList.remove(this.expanded)
 			e.target.classList.add(this.collapsed)
 			if(this.options.checkboxes) {
-				e.target.nextElementSibling.nextElementSibling.nextElementSibling.src = this.imgpath+this.imgstatic[1]
+				e.target.nextElementSibling.nextElementSibling.nextElementSibling.src = this.options.imgpath+this.options.imgstatic[1]
 			} else {
-				e.target.nextElementSibling.nextElementSibling.src = this.imgpath+this.imgstatic[1]
+				e.target.nextElementSibling.nextElementSibling.src = this.options.imgpath+this.options.imgstatic[1]
 			}
 			this.collapseItem(e.target.parentNode)
 		}
@@ -332,7 +315,7 @@ export class tree {
 			this.setItemsChecked(e.target.parentNode.id, true)
 			checked = true
 		}
-		if(e.target.parentNode.hasAttribute('group') && e.target.parentNode.nextElementSibling && e.target.parentNode.nextElementSibling.firstElementChild.tagName.toLowerCase() == 'ul') {
+		if(this.options.subChecked && e.target.parentNode.hasAttribute('group') && e.target.parentNode.nextElementSibling && e.target.parentNode.nextElementSibling.firstElementChild.tagName.toLowerCase() == 'ul') {
 			e.target.parentNode.nextElementSibling.querySelectorAll('.lichecked, .liunchecked').forEach(chk => {																		
 				this.defaultChecked['dc'+e.target.parentNode.id] && chk.classList.contains('lichecked') && chk.parentNode.querySelector('.selectedTreeItem') && this.removeSelection()		
 				chk.classList.remove(e.target.classList.contains('lichecked') ? 'liunchecked' : 'lichecked')						
@@ -373,7 +356,7 @@ export class tree {
 			sul.style.listStyleType = 'none'
 			sul.style.padding = '0px'
 			sul.appendChild(document.getElementById(ddata))	
-			e.target.parentNode.querySelector('img').src = this.imgpath+this.imgstatic[0]
+			e.target.parentNode.querySelector('img').src = this.options.imgpath+this.options.imgstatic[0]
 			e.target.parentNode.querySelector('span:first-child').classList.remove(this.collapsed)
 			e.target.parentNode.querySelector('span:first-child').classList.add(this.expanded)
 			this.setDataAttribute(e.target.parentNode.id, 'expanded', 'true')						  						
@@ -384,13 +367,13 @@ export class tree {
 		this.setItemPosition(eldata, e.target.parentNode.id, this.data)		
 		if(this.dragStartParent.children.length == 0) {
 			let dparent = this.dragStartParent.parentNode.previousElementSibling 
-			dparent.querySelector('img').src = this.imgpath+this.imgstatic[1]
+			dparent.querySelector('img').src = this.options.imgpath+this.options.imgstatic[1]
 			dparent.querySelector('span:first-child').classList.remove(this.expanded)
 			dparent.querySelector('span:first-child').classList.add(this.collapsed)
 			dparent.nextElementSibling.remove()
 		}
 		setTimeout(() => {
-			this.calculateDashed(this.container.firstElementChild, this.data)
+			this.calculateDashed(this.view.firstElementChild, this.data)
 		}, 100)
 	}
 
@@ -427,7 +410,7 @@ export class tree {
 			}
 			let expcol
 			if(parent.nextElementSibling && parent.nextElementSibling.style.display == 'none') {
-				e.target.previousElementSibling.src = this.imgpath+this.imgstatic[0]							
+				e.target.previousElementSibling.src = this.options.imgpath+this.options.imgstatic[0]							
 				if(this.options.checkboxes) {
 					expcol = e.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
 				} else {
@@ -437,7 +420,7 @@ export class tree {
 				expcol.classList.add('liexpanded')
 				this.expandItem(parent)	
 			} else {
-				e.target.previousElementSibling.src = this.imgpath+this.imgstatic[1]
+				e.target.previousElementSibling.src = this.options.imgpath+this.options.imgstatic[1]
 				if(this.options.checkboxes) {
 					expcol = e.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
 				} else {
@@ -481,7 +464,7 @@ export class tree {
 			}
 			if(item.items && Array.isArray(item.items) && item.items.length) {
 				if(item.expanded && item.expanded == 'true') {
-					this.calculateDashed(this.container.querySelector('#'+CSS.escape(item.id)).nextElementSibling.firstElementChild, item.items)
+					this.calculateDashed(this.view.querySelector('#'+CSS.escape(item.id)).nextElementSibling.firstElementChild, item.items)
 					countli[i] = this.countChildrens(item.items) + 1
 				} else {
 					countli[i] += 1
@@ -518,26 +501,26 @@ export class tree {
 	}
 
 	setItemText(id, txt) {
-		this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').innerHTML = txt
+		this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').innerHTML = txt
 		this.setDataAttribute(id, 'text', txt)
 	}
 
 	getItemText(id) {
-		return this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').innerHTML
+		return this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').innerHTML
 	}
 
 	setItemStyle(id, style) {
-		let el = this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child') 
+		let el = this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child') 
 		el.style.cssText = el.style.cssText+style
 		this.setDataAttribute(id, 'style', style)
 	}
 
 	getItemStyle(id) {
-		return this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').style
+		return this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').style
 	}
 
 	getItemAttribute(id, attr) {
-		return this.container.querySelector('#'+CSS.escape(id)).getAttribute(attr)
+		return this.view.querySelector('#'+CSS.escape(id)).getAttribute(attr)
 	}
 
 	setItemAttribute(id, attr, val) {
@@ -552,12 +535,12 @@ export class tree {
 				return
 			break
 		}
-		this.container.querySelector('#'+CSS.escape(id)).setAttribute(attr, val)
+		this.view.querySelector('#'+CSS.escape(id)).setAttribute(attr, val)
 		this.setDataAttribute(id, attr, val)
 	}
 
 	setItemIcon(id, icon) {
-		let li = this.container.querySelector('#'+CSS.escape(id)), iconel
+		let li = this.view.querySelector('#'+CSS.escape(id)), iconel
 		if(li.querySelector('.treeicon')) {
 			if(icon.match(/^(\<span|\<i)/i)) {
 				let parser = new DOMParser
@@ -568,7 +551,7 @@ export class tree {
 				iconel.style.cursor = 'default'	
 				li.replaceChild(iconel, li.querySelector('.treeicon'))
 			} else {
-				li.querySelector('.treeicon').src = this.imgpath+icon
+				li.querySelector('.treeicon').src = this.options.imgpath+icon
 			}
 		} else {
 			if(icon.match(/^(\<span|\<i)/i)) {
@@ -577,7 +560,7 @@ export class tree {
 			} else {
 				iconel = document.createElement('img')
 				iconel.classList.add('treeicon')
-				iconel.src = this.imgpath+icon
+				iconel.src = this.options.imgpath+icon
 				iconel.style.marginRight = '5px'
 			}
 			iconel.style.width = '16px'
@@ -594,8 +577,8 @@ export class tree {
 	}
 
 	getSelectedId() {
-		if(this.container.querySelector('.selectedTreeItem')) {
-			return this.container.querySelector('.selectedTreeItem').parentNode.id
+		if(this.view.querySelector('.selectedTreeItem')) {
+			return this.view.querySelector('.selectedTreeItem').parentNode.id
 		} else {
 			return ''
 		}
@@ -603,17 +586,17 @@ export class tree {
 
 	setItemSelected(id, trigger) {
 		this.removeSelection()
-		this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').classList.add('selectedTreeItem')
-		trigger && this.container.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').click()
+		this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').classList.add('selectedTreeItem')
+		trigger && this.view.querySelector('#'+CSS.escape(id)).querySelector('span:last-child').click()
 	}
 
 	removeSelection() {
-		this.container.querySelector('.selectedTreeItem') && this.container.querySelector('.selectedTreeItem').classList.remove('selectedTreeItem')
+		this.view.querySelector('.selectedTreeItem') && this.view.querySelector('.selectedTreeItem').classList.remove('selectedTreeItem')
 	}
 
 	deleteItem(id) {
-		this.container.querySelector('#'+CSS.escape(id)).remove()
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.view.querySelector('#'+CSS.escape(id)).remove()
+		this.calculateDashed(this.view.firstElementChild, this.data)
 		this.deleteItemRec(id, this.data)
 	}
 
@@ -630,14 +613,14 @@ export class tree {
 	}
 
 	getParentId(id) {
-		let parent = this.container.querySelector('#'+CSS.escape(id)).parentNode.parentNode.previousElementSibling
+		let parent = this.view.querySelector('#'+CSS.escape(id)).parentNode.parentNode.previousElementSibling
 		if(parent) {
 			return parent.id
 		}
 	}
 
 	isChecked(id) {
-		return this.container.querySelector('#'+CSS.escape(id)).querySelector('.lichecked')
+		return this.view.querySelector('#'+CSS.escape(id)).querySelector('.lichecked')
 	}
 
 	isOpen(id) {
@@ -649,7 +632,7 @@ export class tree {
 	}
 
 	setItemChecked(id, state) {
-		let el = this.container.querySelector('#'+CSS.escape(id)).querySelector('.lichecked, .liunchecked')
+		let el = this.view.querySelector('#'+CSS.escape(id)).querySelector('.lichecked, .liunchecked')
 		if(state) {
 			if(!el.classList.contains('lichecked') && el.classList.contains('liunchecked')) {
 				el.classList.remove('liunchecked')
@@ -677,7 +660,7 @@ export class tree {
 		if(el.nextElementSibling.firstElementChild.tagName && el.nextElementSibling.firstElementChild.tagName.toLowerCase() == 'ul') {
 			el.nextElementSibling.style.display = 'block'
 			this.setDataAttribute(el.id, 'expanded', 'true')
-			this.calculateDashed(this.container.firstElementChild, this.data)		
+			this.calculateDashed(this.view.firstElementChild, this.data)		
 			typeof this.itemOnOpen == 'function' && this.itemOnOpen(el.id, this.store)
 		}
 	}
@@ -695,41 +678,41 @@ export class tree {
 		if(el.nextElementSibling.firstElementChild.tagName && el.nextElementSibling.firstElementChild.tagName.toLowerCase() == 'ul') {
 			el.nextElementSibling.style.display = 'none'
 			this.setDataAttribute(el.id, 'expanded', 'false')
-			this.calculateDashed(this.container.firstElementChild, this.data)		
+			this.calculateDashed(this.view.firstElementChild, this.data)		
 			typeof this.itemOnClose == 'function' && this.itemOnClose(el.id, this.store)
 		}
 	}
 
 	expandAll() {
-		this.container.querySelectorAll('.'+this.collapsed).forEach(item => {
+		this.view.querySelectorAll('.'+this.collapsed).forEach(item => {
 			item.classList.remove(this.collapsed)
 			item.classList.add(this.expanded)
 			if(!item.parentNode.nextElementSibling) {
 				return
 			}
 			item.parentNode.nextElementSibling.style.display = 'block'
-			item.parentNode.querySelector('img').src = this.imgpath+this.imgstatic[0]
+			item.parentNode.querySelector('img').src = this.options.imgpath+this.options.imgstatic[0]
 			this.setDataAttribute(item.parentNode.id, 'expanded', 'true')
 		})
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.calculateDashed(this.view.firstElementChild, this.data)
 	}
 
 	collapseAll() {
-		this.container.querySelectorAll('.'+this.expanded).forEach(item => {
+		this.view.querySelectorAll('.'+this.expanded).forEach(item => {
 			item.classList.remove(this.expanded)
 			item.classList.add(this.collapsed)
 			if(!item.parentNode.nextElementSibling) {
 				return
 			}
 			item.parentNode.nextElementSibling.style.display = 'none'
-			item.parentNode.querySelector('img').src = this.imgpath+this.imgstatic[1]
+			item.parentNode.querySelector('img').src = this.options.imgpath+this.options.imgstatic[1]
 			this.setDataAttribute(item.parentNode.id, 'expanded', 'false')
 		})
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.calculateDashed(this.view.firstElementChild, this.data)
 	}
 
 	setAllChecked() {
-		this.container.querySelectorAll('.liunchecked').forEach(item => {
+		this.view.querySelectorAll('.liunchecked').forEach(item => {
 			this.setItemsChecked(item.parentNode.id, true)
 			item.classList.remove('liunchecked')
 			item.classList.add('lichecked')
@@ -737,7 +720,7 @@ export class tree {
 	}
 
 	setAllUnchecked() {
-		this.container.querySelectorAll('.lichecked').forEach(item => {
+		this.view.querySelectorAll('.lichecked').forEach(item => {
 			this.setItemsChecked(item.parentNode.id, false)
 			item.classList.remove('lichecked')
 			item.classList.add('liunchecked')
@@ -779,16 +762,16 @@ export class tree {
 		return attrval
 	}
 
-	setItemPosition(el, container, data) {
+	setItemPosition(el, view, data) {
 		data.forEach(item => {
-			if(item.id == container) {
+			if(item.id == view) {
 				if(!Array.isArray(item.items)) {
 					item.items = []
 				}
 				item.items.push(el)
 				return
 			}
-			item.items && Array.isArray(item.items) && this.setItemPosition(el, container, item.items)
+			item.items && Array.isArray(item.items) && this.setItemPosition(el, view, item.items)
 		})
 	}
 
@@ -880,20 +863,20 @@ export class tree {
 	}
 
 	setFocus(id) {
-		if(this.container.clientHeight > this.container.firstElementChild.clientHeight) {
+		if(this.view.clientHeight > this.view.firstElementChild.clientHeight) {
 			return
 		}
-		this.container.querySelector('#'+CSS.escape(id)).scrollIntoView(true)
-		this.container.scrollLeft = 0
+		this.view.querySelector('#'+CSS.escape(id)).scrollIntoView(true)
+		this.view.scrollLeft = 0
 	}
 
 	insertChild(parent, child, txt, icon) {
-		let el = parent == 'root' ? this.container : this.container.querySelector('#'+CSS.escape(parent)), node = this.cloned
+		let el = parent == 'root' ? this.view : this.view.querySelector('#'+CSS.escape(parent)), node = this.cloned
 		node.id = child
 		node.children[node.children.length - 1].innerHTML = txt
 		this.setClonedEvents()
 		if(parent == 'root') {
-			this.container.appendChild(this.cloned)
+			this.view.appendChild(this.cloned)
 		} else {
 			if(el.nextElementSibling.firstElementChild.tagName.toLowerCase() == 'ul') {
 				el.nextElementSibling.firstElementChild.appendChild(node)
@@ -925,13 +908,13 @@ export class tree {
 			imgiterate.forEach(img => {
 
 				if(img.tagName.toLowerCase() == 'img') {
-					img.src = this.imgpath+icon
+					img.src = this.options.imgpath+icon
 				}
 			})			
 		}
 		this.cloned = node.cloneNode(true)
 		this.insertChildInData(parent, child, txt, icon, this.data)
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.calculateDashed(this.view.firstElementChild, this.data)
 	}
 
 	insertChildInData(parent, child, txt, icon, data) {
@@ -968,11 +951,11 @@ export class tree {
 	}
 
 	nodeExists(id) {
-		return this.container.querySelector('#'+CSS.escape(id)) ? true : false
+		return this.view.querySelector('#'+CSS.escape(id)) ? true : false
 	}
 
 	hideLeafs()  {
-		this.container.querySelector('[leaf="true"]').style.display = 'none'
+		this.view.querySelector('[leaf="true"]').style.display = 'none'
 	}
 
 	sortTree(id, dir) {
@@ -1007,9 +990,9 @@ export class tree {
 				this.getChildrens(id).reverse()
 			}
 		}
-		this.container.innerHTML = ''	
-		this.setTree(this.container, this.data, 0)
-		this.calculateDashed(this.container.firstElementChild, this.data)
+		this.view.innerHTML = ''	
+		this.setTree(this.view, this.data, 0)
+		this.calculateDashed(this.view.firstElementChild, this.data)
 	}
 
 	getXHRData() {

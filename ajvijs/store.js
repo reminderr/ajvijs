@@ -19,9 +19,7 @@ export class store {
 		if(target instanceof Element) {
 			this.storeName = target.getAttribute('store')
 			this.element = target
-			if(!target.Own()) {
-				target.Own(setOwner(target))
-			}
+			!target.Own() && target.Own(setOwner(target))
 			this.scope.store[target.Own()] = this
 			this.domhub = new domhub(this.element, this.scope)
 			this.paginate = this.element.hasAttribute('paginate') ? this.element.getAttribute('paginate') : null
@@ -34,7 +32,9 @@ export class store {
 	}
 
 	applyStore() {
-		typeof this.scope[this.storeName] == 'function' && this.scope[this.storeName](this)
+		return new Promise((res, rej) => {
+			typeof this.scope[this.storeName] == 'function' && res(this.scope[this.storeName](this))
+		})
 	}
 
 	applyStoreToDOM() {	 						
@@ -162,9 +162,9 @@ export class store {
 			})
 		}
 		this._fill.params = frmData
-		this.request(this.xhrFill, this._fill).then(data => {
+		return this.request(this.xhrFill, this._fill).then(data => {
 			if(this._fill.passthrough) {
-				return
+				return data
 			}
 			if(this.element instanceof Element) {
 				this.domhub.createFromStore(this.element.tagName.toLowerCase(), this.paginate ? this.data.fill.paginate(this.page, this.paginate).data : this.data.fill, this).then(() => {

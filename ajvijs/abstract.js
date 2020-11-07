@@ -3,6 +3,7 @@ import {store} from './store.js'
 import {view} from './elements/view/view.js'
 import {list} from './elements/list/list.js'
 import {tree} from './elements/tree/tree.js'
+import {layout} from './elements/layout/layout.js'
 
 export class ajvi extends events {
 
@@ -524,13 +525,13 @@ export class ajvi extends events {
 		return document.createElement(node)
 	}
 
-	View(el, attrs) {		
-		this[attrs['name']] = el		
-		if(attrs['store']) {
-			let store = this.setStore(attrs['store'])
+	View(el, settings) {		
+		this[settings['name']] = el		
+		if(settings['store']) {
+			let store = this.setStore(settings['store'])
 			store.applyStore()
-			this[attrs['name']].Store(store)
-			this[attrs['then']]()			
+			this[settings['name']].Store(store)
+			this[settings['then']]()			
 		}
 	}
 
@@ -548,25 +549,25 @@ export class ajvi extends events {
 		return new list(this, 0, 0, 0, settings)
 	}
 
-	createTree(settings, protos) {
+	TreeView(settings, protos) {
 		protos && Object.keys(protos).forEach(proto => tree.prototype[proto] = protos[proto])
-		return new tree(this, 0, 0, 0, settings)
+		this[settings['name']] = new tree(this, 0, 0, 0, settings)
 	}
 
 	createLayout(settings) {
-
+		this[settings['name']] = new layout(settings, this)
 	}
-
+	/*
 	createAccordion(settings) {
-
+		//todo for version 1.0.2
 	}
 
 	createTab(settings) {
-
+		//todo for version 1.0.2
 	}
 
 	createpanel(settings) {
-		
-	}
+		//todo for version 1.0.2
+	}*/
 	
 }

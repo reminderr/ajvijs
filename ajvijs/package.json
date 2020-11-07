@@ -1,13 +1,13 @@
 {
   "_args": [
     [
-      "ajvijs@1.0.1582",
+      "ajvijs@1.0.1585",
       "C:\\wamp64\\www\\elements"
     ]
   ],
   "_development": true,
-  "_from": "ajvijs@1.0.1582",
-  "_id": "ajvijs@1.0.1582",
+  "_from": "ajvijs@1.0.1585",
+  "_id": "ajvijs@1.0.1585",
   "_inBundle": false,
   "_integrity": "sha512-EIO5/5iubPpA9T8Ksqf8iOkTzE43n7W5Kvodma5G91d2qoraAXWmaa/bwksm66SGOYPY/5lkxCHW4n9itBfSeQ==",
   "_location": "/ajvijs",
@@ -15,24 +15,24 @@
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "ajvijs@1.0.1582",
+    "raw": "ajvijs@1.0.1585",
     "name": "ajvijs",
     "escapedName": "ajvijs",
-    "rawSpec": "1.0.1582",
+    "rawSpec": "1.0.1585",
     "saveSpec": null,
-    "fetchSpec": "1.0.1582"
+    "fetchSpec": "1.0.1585"
   },
   "_requiredBy": [
     "#DEV:/"
   ],
-  "_resolved": "https://registry.npmjs.org/ajvijs/-/ajvijs-1.0.1582.tgz",
-  "_spec": "1.0.1582",
+  "_resolved": "https://registry.npmjs.org/ajvijs/-/ajvijs-1.0.1585.tgz",
+  "_spec": "1.0.1585",
   "_where": "C:\\wamp64\\www\\elements",
   "author": {
     "name": "Sven Macolic"
   },
   "description": "Cross control store focused framework",
-  "license": "ISC",
+  "license": "MIT",
   "main": "abstract.js",
   "name": "ajvijs",
   "scripts": {
@@ -41,5 +41,5 @@
   "dependencies": {
     "tail.datetime": "^0.4.13" 
   },
-  "version": "1.0.1582"
+  "version": "1.0.1585"
 }
