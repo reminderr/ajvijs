@@ -3,13 +3,13 @@ AjviJS cross control store focused framework
 To install AjviJS
 
 ```
-npm i ajvijs
+npm i ajvijsmvc
 ```
 
 or for development
 
 ```
-npm install ajvijs --save-dev
+npm install ajvijsmvc --save-dev
 ```
 
 -------------------------
