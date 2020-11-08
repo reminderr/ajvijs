@@ -950,7 +950,7 @@ export class tree {
 		this.options.context && this.cloned.addEventListener('contextmenu', this.itemContext.bind(this))
 	}
 
-	nodeExists(id) {
+	itemExists(id) {
 		return this.view.querySelector('#'+CSS.escape(id)) ? true : false
 	}
 
