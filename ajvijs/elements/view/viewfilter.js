@@ -516,7 +516,6 @@ export class viewfilter {
 		btn.style.float = 'right'
 		!this.scope.hasEvent(btn, 'click') && this.scope.setEvent(btn, 'click', (s, o, e) => {
 			e.stopPropagation()
-			delete this.processeddata
 			this.filter[this.datakey] = defs
 			this.element.querySelector('#filter_'+this.cellindex).querySelector('path').setAttribute('style', 'fill: blue')
 			let data = this.processeddata ? this.processeddata : this.store.dataOrig.fill
