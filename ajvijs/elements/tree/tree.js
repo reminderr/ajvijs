@@ -45,7 +45,8 @@ export class tree {
 	applyStore() {
 		this.store = this.scope.setStore(this.options.store)
 		this.store.applyStore()
-		this.store.Fill().then(data => {
+		let model = this.store.Fill() || new Promise(res => res(this.store.data.fill))
+		model.then(data => {
 			this.data = data
 			this.setItemsId(data)
 			this.setTree(this.view, data)
@@ -762,16 +763,16 @@ export class tree {
 		return attrval
 	}
 
-	setItemPosition(el, view, data) {
+	setItemPosition(el, id, data) {
 		data.forEach(item => {
-			if(item.id == view) {
+			if(item.id == id) {
 				if(!Array.isArray(item.items)) {
 					item.items = []
 				}
 				item.items.push(el)
 				return
 			}
-			item.items && Array.isArray(item.items) && this.setItemPosition(el, view, item.items)
+			item.items && Array.isArray(item.items) && this.setItemPosition(el, id, item.items)
 		})
 	}
 
@@ -1000,7 +1001,7 @@ export class tree {
 	}
 
 	getData() {
-		return this.store.fill
+		return this.store.dataOrig.fill
 	}
 
 }

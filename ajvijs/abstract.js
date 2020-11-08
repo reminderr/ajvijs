@@ -539,9 +539,9 @@ export class ajvi extends events {
 		 return new store(target, this)
 	}
 
-	createView(settings, protos) {
+	DataView(settings, protos) {
 		protos && Object.keys(protos).forEach(proto => view.prototype[proto] = protos[proto])
-		return new view(this, 0, 0, 0, settings)
+		this[settings['name']] = new view(this, 0, 0, 0, settings)
 	}
 
 	createList(settings, protos) {

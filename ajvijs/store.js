@@ -135,7 +135,7 @@ export class store {
 		this.dataOrig.fill = data
 		this.paginateData.fill = data
 		if(!this.element) {
-			typeof this.scope.dataLoad == 'function' && this.scope.dataLoad()
+			typeof this.scope.dataLoad == 'function' && this.scope.dataLoad(data)
 			return
 		}
 		this.domhub.createFromStore(this.element.tagName, this.paginate ? this.data.fill.paginate(this.page, this.paginate).data : data, this).then(() => {

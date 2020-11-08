@@ -508,11 +508,11 @@ export class events {
 	 * @return void
 	 */
 	observableEventQueue(mutation, el) {
-	    let own = el.Own(), ev = this.observableEventType(mutation, own), evts = this.collectEventsOrig[own], execfn	    
+	    let own = el.Own(), ev = this.observableEventType(mutation, own), evts = this.collectEventsOrig[own], execfn	
 	    if(!this.collectEventsOrig[own]) {
 	    	return
 	    }
-	    if(!this.collectEventsOrig[own][ev.toLowerCase()]) {
+	    if(!this.collectEventsOrig[own][ev ? ev.toLowerCase() : ev]) {
 	    	return
 	    }
 	    if(ev != 'add' && ev != 'remove' && ev != 'show' && ev != 'hide') {
@@ -589,13 +589,13 @@ export class events {
 	 * @param (string) own - Owner
 	 * @return string
 	 */
-	observableEventType(mutation, own) {		
+	observableEventType(mutation, own) {	
 		switch(mutation.type) {
 			case 'childList':
-				if(mutation.addedNodes.length > 0) {
+				if(mutation.addedNodes.length > 0 && mutation.addedNodes[mutation.addedNodes.length - 1].nodeType == 1) {
 					return 'add'
 				}
-				if(mutation.removedNodes.length > 0) {
+				if(mutation.removedNodes.length > 0 && mutation.removedNodes[mutation.removedNodes.length - 1].nodeType == 1) {
 					return 'remove'
 				}
 			break

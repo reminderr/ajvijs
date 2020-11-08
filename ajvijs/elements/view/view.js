@@ -25,30 +25,31 @@ export class view {
 		}
 		this.options = options
 		this.footer = false
-		this.paginate = false
+		this.paginate = false		
 		if(!this.options.store) {
 			throw 'Store not set for the element'
 			return
 		}
 		if(options.output && options.output.toLowerCase() == 'div') {
 			this.tag = 'div'
-			this.container = document.createElement('div')
-			this.container.classList.add('table')
+			this.view = document.createElement('div')
+			this.view.classList.add('table')
 		} else {
 			this.tag = 'table'
-			this.container = document.createElement('table')
+			this.view = document.createElement('table')
 		}
 		if(typeof store != 'object') {			
-			this.options.store && this.container.setAttribute('store', this.options.store)
-			this.options.targetstore && this.container.setAttribute('targetstore', this.options.targetstore)
-			this.options.autoload && this.container.setAttribute('autoload', '')
-			this.options.paginate && this.container.setAttribute('paginate', this.options.paginate)
-			this.options.editable && this.container.setAttribute('editable', '')
-			this.options.linenumber && this.container.setAttribute('linenumber', '')
-			this.options.classList && this.container.classList.add(...this.options.classList)
-			this.createView()
-			this.insertView()
-			this.applyStore()
+			this.options.store && this.view.setAttribute('store', this.options.store)
+			this.options.targetstore && this.view.setAttribute('targetstore', this.options.targetstore)
+			this.options.autoload && this.view.setAttribute('autoload', '')
+			this.options.paginate && this.view.setAttribute('paginate', this.options.paginate)
+			this.options.editable && this.view.setAttribute('editable', '')
+			this.options.linenumber && this.view.setAttribute('linenumber', '')
+			this.options.classList && this.view.classList.add(...this.options.classList)
+			setTimeout(() => {
+				this.createView()
+				this.applyStore()
+			}, 100)
 		}
 		return this
 	}
@@ -82,7 +83,7 @@ export class view {
 			trow.appendChild(th)
 		})
 		this.thead.appendChild(trow)
-		this.container.appendChild(this.thead)
+		this.view.appendChild(this.thead)
 	}
 
 	setDataKey() {
@@ -93,7 +94,7 @@ export class view {
 			trow.appendChild(td)
 		})
 		this.tbody.appendChild(trow)
-		this.container.appendChild(this.tbody)
+		this.view.appendChild(this.tbody)
 	}
 
 	setFooter() {
@@ -104,7 +105,7 @@ export class view {
 			trow.appendChild(th)
 		})
 		this.tfoot.appendChild(trow)
-		this.container.appendChild(this.tfoot)
+		this.view.appendChild(this.tfoot)
 		this.footer = true
 	}
 
@@ -142,7 +143,7 @@ export class view {
 		this.tag == 'table' && th.setAttribute('colspan', this.options.datakey.length)
 		trow.appendChild(th)
 		this.tfoot.appendChild(trow)
-		!this.footer && this.container.appendChild(this.tfoot) 
+		!this.footer && this.view.appendChild(this.tfoot) 
 		this.paginate = true
 	}
 
@@ -178,22 +179,8 @@ export class view {
 		}
 	}
 
-	insertView() {
-		let el
-		if(this.options.container instanceof Element) {
-			el = this.options.container
-		} else {
-			if(!document.querySelector('['+this.options.container+'=""]')) {
-				el = this.scope.getId(this.options.container)
-			} else {
-				el = document.querySelector('['+this.options.container+'=""]')			
-			}
-		}
-		el.appendChild(this.container)
-	}
-
 	applyStore() {
-		this.store = this.scope.setStore(this.container, this.scope)
+		this.store = this.scope.setStore(this.view, this.scope)
 		this.store.applyStoreToDOM() 
 		this.store.paginateData.fill = this.store.data.fill
 	}
@@ -240,6 +227,7 @@ export class view {
 					theadchildrens[thindex].innerHTML = theadchildrens[thindex].innerHTML+' <svg id="filter_'+thindex+'" height="10" width="10" viewBox="0 0 80 90" focusable=false><path d="m 0,0 30,45 0,30 10,15 0,-45 30,-45 Z"></path></svg>'
 					this.scope.setEvent(theadchildrens[thindex], 'click', (s, o, e) => {
 						e.stopPropagation()
+						this.editableView && this.editableView.closeOpenCells()
 						if(this.viewfilter instanceof viewfilter) {
 							this.viewfilter.applyFilter(e.target, e)
 						} else {
@@ -248,6 +236,16 @@ export class view {
 					})
 					theadchildrens[thindex].querySelector('#filter_'+thindex).addEventListener('click', e => {
 						e.stopPropagation()
+						this.editableView && this.editableView.closeOpenCells()
+						if(this.viewfilter instanceof viewfilter) {
+							this.viewfilter.applyFilter(e.target.parentNode, e)
+						} else {
+							this.viewfilter = new viewfilter(this.scope, this.element, this.columnRules, e.target.parentNode, e)
+						}
+					})
+					theadchildrens[thindex].querySelector('#filter_'+thindex).children[0].addEventListener('click', e => {
+						e.stopPropagation()
+						this.editableView && this.editableView.closeOpenCells()
 						if(this.viewfilter instanceof viewfilter) {
 							this.viewfilter.applyFilter(e.target.parentNode.parentNode, e)
 						} else {
@@ -342,8 +340,8 @@ export class view {
 				cell.style.cursor = 'pointer'
 			}
 			el.innerHTML = el.innerHTML.replace(re, cell.outerHTML)
-			if(this.columnRules) {
-				let ruleindex = this.element.hasAttribute('linenumber') ? cellindex - 1 : cellindex 
+			let ruleindex = this.element.hasAttribute('linenumber') ? cellindex - 1 : cellindex 
+			if(this.columnRules) {				
 				let rules = Object.values(this.columnRules.rules)[ruleindex]
 				if(rules.type.toLowerCase() == 'list') {
 					Object.keys(rules.items).forEach(_item => {
@@ -398,7 +396,9 @@ export class view {
 			} else {
 				el.firstElementChild.innerHTML = item
 			}
-			this.element.hasAttribute('editable') && new editableView(this.data, this.scope, this.element, el, row, this.columnRules, rowindex, this.element.hasAttribute('linenumber') ? cellindex - 1 : cellindex, item, this)
+			if(this.element.hasAttribute('editable')) {
+				this.editableView = new editableView(this.data, this.scope, this.element, el, row, this.columnRules, rowindex, this.element.hasAttribute('linenumber') ? cellindex - 1 : cellindex, item, this)
+			}
 		}	
 	}
 
@@ -473,7 +473,7 @@ export class view {
 			} else if(rules.type && rules.type.toLowerCase() == 'checkbox') {
 				cloned.children[i].querySelector('input[type="checkbox"]').checked = false
 			}		
-			new editableView(this.data, this.scope, this.element, cloned.children[i], cloned.children[i].parentNode, this.columnRules, this.data.length - 1, linenumber ? i - 1 : i, '', this)
+			this.editableView = new editableView(this.data, this.scope, this.element, cloned.children[i], cloned.children[i].parentNode, this.columnRules, this.data.length - 1, linenumber ? i - 1 : i, '', this)
 			++i
 			++count
 		})

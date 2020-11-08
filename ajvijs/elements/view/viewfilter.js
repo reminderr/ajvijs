@@ -2,6 +2,7 @@ import {dateToISO} from './../../utils/utils.js'
 import {dateToInt} from './../../utils/utils.js'
 import {dateTimeToInt} from './../../utils/utils.js'
 import {timeToInt} from './../../utils/utils.js'
+import tail from 'tail.datetime/js/tail.datetime.js'
 
 export class viewfilter {
 	
@@ -161,7 +162,7 @@ export class viewfilter {
 	}
 
 	filterDateTime(type) {
-		let searchFrom = document.createElement('input')
+		let searchFrom = document.createElement('input'), rules = this.column.rules[this.datakey]
 		searchFrom.type = 'text'
 		searchFrom.id = 'searchfrom_'+this.cellindex
 		searchFrom.classList.add('form-control')
@@ -178,8 +179,16 @@ export class viewfilter {
 			e.preventDefault()
 		})
 		!this.scope.hasEvent(searchFrom, 'focus') && this.scope.setEvent(searchFrom, 'focus', (s, o, e) => {
-			typeof this.scope[this.element.getAttribute('store')+'DateTimeFilter'] == 'function' &&
-				this.scope[this.element.getAttribute('store')+'DateTimeFilter'](searchFrom, this.column.rules[this.datakey])
+			if(this.tail) {
+				this.tail.remove()
+				delete this.tail
+			}
+			this.tail = new tail(o, { 
+				position: 'right',
+				startOpen: true,
+				dateFormat: rules.type == 'time' ? false : rules.format,
+				timeFormat: rules.type == 'date' ? false : 'HH:ii:ss'
+			})
 		})
 		this.container.appendChild(searchFrom)
 		let searchTo = document.createElement('input')
@@ -199,8 +208,16 @@ export class viewfilter {
 			e.preventDefault()
 		})
 		!this.scope.hasEvent(searchTo, 'focus') && this.scope.setEvent(searchTo, 'focus', (s, o, e) => {
-			typeof this.scope[this.element.getAttribute('store')+'DateTimeFilter'] == 'function' &&
-				this.scope[this.element.getAttribute('store')+'DateTimeFilter'](searchTo, this.column.rules[this.datakey])
+			if(this.tail) {
+				this.tail.remove()
+				delete this.tail
+			}
+			this.tail = new tail(o, { 
+				position: 'right',
+				startOpen: true,
+				dateFormat: rules.type == 'time' ? false : rules.format,
+				timeFormat: rules.type == 'date' ? false : 'HH:ii:ss'
+			})
 		})
 		this.container.appendChild(searchTo)
 		this.resetBtn()

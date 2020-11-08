@@ -1,46 +1,15 @@
 {
-  "_args": [
-    [
-      "ajvijsmvc@0.0.1586",
-      "C:\\wamp64\\www\\elements"
-    ]
-  ],
-  "_development": true,
-  "_from": "ajvijsmvc@0.0.1586",
-  "_id": "ajvijsmvc@0.0.1586",
-  "_inBundle": false,
-  "_integrity": "sha512-EIO5/5iubPpA9T8Ksqf8iOkTzE43n7W5Kvodma5G91d2qoraAXWmaa/bwksm66SGOYPY/5lkxCHW4n9itBfSeQ==",
-  "_location": "/ajvijsmvc",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "ajvijsmvc@0.0.1586",
-    "name": "ajvijsmvc",
-    "escapedName": "ajvijsmvc",
-    "rawSpec": "0.0.1586",
-    "saveSpec": null,
-    "fetchSpec": "0.0.1586"
-  },
-  "_requiredBy": [
-    "#DEV:/"
-  ],
-  "_resolved": "https://registry.npmjs.org/ajvijsmvc/-/ajvijsmvc-0.0.1586.tgz",
-  "_spec": "0.0.1586",
-  "_where": "C:\\wamp64\\www\\elements",
-  "author": {
-    "name": "Sven Macolic"
-  },
-  "description": "Cross control store focused framework",
-  "license": "MIT",
-  "main": "abstract.js",
   "name": "ajvijsmvc",
+  "version": "0.0.0152",
+  "description": "AjviJS cross control store focused framework",
+  "main": "abstract.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": ["mvc", "mvc framework", "framework", "js", "ES6", "javascript"],
+  "author": "Sven Macolic",
+  "license": "MIT",
   "dependencies": {
-    "tail.datetime": "^0.4.13" 
-  },
-  "version": "0.0.1586",
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+    "tail.datetime":"^0.4.13"
+  }
 }

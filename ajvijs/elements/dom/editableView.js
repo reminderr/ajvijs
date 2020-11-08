@@ -1,5 +1,6 @@
 import {dateToISO} from './../../utils/utils.js'
 import {formatDate} from './../../utils/utils.js'
+import tail from 'tail.datetime/js/tail.datetime.js'
 
 export class editableView {
 	
@@ -139,7 +140,24 @@ export class editableView {
 		this.setInputEvents(datetimeinput, rule)                                               
 		span.innerHTML = ''
 		span.appendChild(datetimeinput)
-		datetimeinput.focus()
+		datetimeinput.focus()		
+		span.SetEvent('remove', (s, o, e) => {
+			if(this.tail) {
+				this.tail.remove()
+				delete this.tail
+			}
+			span.UnsetEvent('remove')
+		})
+		setTimeout(() => {
+			this.tail = new tail(datetimeinput, { 
+				position: 'bottom',
+				startOpen: true,
+				dateFormat: rule.type == 'time' ? false : rule.format,
+				timeFormat: rule.type == 'date' ? false : 'HH:ii:ss',
+				dateStart: rule.min ? this.getLimitDateTime(rule.min, 'string') : false,
+				dateEnd: rule.max ? this.getLimitDateTime(rule.max, 'string') : false
+			})
+		}, 200)
 	}
 
 	setCheckboxInput(span) {		
@@ -276,14 +294,14 @@ export class editableView {
 				return
 			}
 			if(input && input.tagName && (input.tagName.toLowerCase() == 'input' || input.tagName.toLowerCase() == 'select')) {
-				this.completeCell(input)
+				this.completeCell(input, input.parentNode.parentNode.Index())
 			}
 		})	
 	}
 
-	completeCell(target) {
+	completeCell(target, index) {
 		let rindex = !isNaN(this.container.hasAttribute('paginate')) ? parseInt(this.container.getAttribute('paginate')) * this.store.page - parseInt(this.container.getAttribute('paginate')) + this.rowindex : this.rowindex
-		let rules = Object.values(this.column.rules)[this.cellindex]
+		let rules = Object.values(this.column.rules)[index ? index : this.cellindex]
 		let own = this.container.getAttribute('own'), unique = this.store.dataOrig.fill[this.scope.getIndexRow(this.container, target)][this.column.unique], i = 0, val
 		switch(rules.type.toLowerCase()) {
 			case 'text':
@@ -425,43 +443,6 @@ export class editableView {
 			break
 		}
 		return date
-	}
-
-	closeHostedElement(el, objToRemove, closeMethod) {
-		!this.scope.hasEvent(el, 'keydown') && this.scope.setEvent(el, 'keydown', (s, o, e) => {
-			if(e.keyCode == 13 || e.keyCode == 27) {
-				this[objToRemove] && this[objToRemove][closeMethod]()
-				delete this[objToRemove]
-			}
-		})
-		let column = el.closest('tbody, .tablebody'), columnschildrens = [...column.children]
-		columnschildrens.forEach(item => {
-			let cellindex = 0, cellchildrens = [...item.children]
-			cellchildrens.forEach(cell => {
-				if(cell.classList.contains('linenumber')) {
-					return
-				}
-				if(cell.querySelector('['+this.container.getAttribute('store')+']')) {
-					return
-				}
-				let erules = Object.values(this.column.rules)[cellindex]
-				if(erules.type != 'date' && erules.type != 'datetime' && erules.type != 'time') {					
-					let input = cell.querySelector('input')
-					if(input && input.type && input.type == 'checkbox') {
-						!this.scope.hasEvent(input, 'focus') && this.scope.setEvent(input, 'focus', () => {
-							this[objToRemove] && this[objToRemove][closeMethod]()
-							delete this[objToRemove]
-						})
-					} else {
-						!this.scope.hasEvent(cell.firstElementChild, 'add') && this.scope.setEvent(cell.firstElementChild, 'add', () => {
-							this[objToRemove] && this[objToRemove][closeMethod]()
-							delete this[objToRemove]
-						})
-					}
-				}
-				++cellindex
-			})
-		})
 	}
 
 }
