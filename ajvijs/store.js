@@ -5,7 +5,7 @@ import {setOwner} from './utils/utils.js'
 
 export class store {
 	
-	constructor(target, scope) {		
+	constructor(target, scope) {	 	
 		this.store = []
 		this.data = []
 		this.paginateData = []
@@ -32,9 +32,15 @@ export class store {
 	}
 
 	applyStore() {
-		return new Promise((res, rej) => {
+		let appliedstore = new Promise((res, rej) => {
 			typeof this.scope[this.storeName] == 'function' && res(this.scope[this.storeName](this))
 		})
+		appliedstore.then(() => {
+			if(this._fill && this._fill.autoload) {
+				return this.Fill()
+			}
+		})
+		return appliedstore
 	}
 
 	applyStoreToDOM() {	 						

@@ -19,7 +19,7 @@ export class ajvi extends events {
 	}
 
 	setProto() {
-		HTMLElement.prototype.Scope = this
+		HTMLElement.prototype.Scope = this 
 		HTMLElement.prototype.At = this.appendTo
 		HTMLElement.prototype.AtFirst = this.appendFirst
 		HTMLElement.prototype.AtLast = this.appendLast
@@ -529,9 +529,10 @@ export class ajvi extends events {
 		this[settings['name']] = el		
 		if(settings['store']) {
 			let store = this.setStore(settings['store'])
-			store.applyStore()
-			this[settings['name']].Store(store)
-			this[settings['then']]()			
+			store.applyStore().then(() => {
+				this[settings['name']].Store(store)
+				typeof this[settings['then']] == 'function' && this[settings['then']]()	
+			})		
 		}
 	}
 
@@ -554,7 +555,7 @@ export class ajvi extends events {
 		this[settings['name']] = new tree(this, 0, 0, 0, settings)
 	}
 
-	createLayout(settings) {
+	Layout(settings) {
 		this[settings['name']] = new layout(settings, this)
 	}
 	/*
