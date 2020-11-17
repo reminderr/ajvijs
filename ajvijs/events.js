@@ -12,6 +12,7 @@ export class events {
 	constructor() {
 		this.evtList = [
 			'beforefocus', 'focus', 'afterfocus',
+			'beforeblur', 'blur', 'afterblur',
 			'beforeclick', 'click', 'afterclick',
 			'beforedblclick', 'dblclick', 'afterdblclick',
 			'beforechange', 'change', 'afterchange',
@@ -25,6 +26,7 @@ export class events {
 			'beforekeydown', 'keydown', 'afterkeydown',			
 			'beforedragstart', 'dragstart', 'afterdragstart',
 			'beforedragover', 'dragover', 'afterdragover',	
+			'beforedragend', 'dragend', 'afterdragend',	
 			'beforedrop', 'drop', 'afterdrop',		
 			'beforeadd', 'add', 'afteradd', 
 			'beforeremove', 'remove', 'afterremove',
@@ -234,6 +236,7 @@ export class events {
 		let evt = ev.toLowerCase(), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
+			case (evt.match(/blur/) || {}).input:
 			case (evt.match(/click/) || {}).input:
 			case (evt.match(/dblclick/) || {}).input:
 			case (evt.match(/mousemove/) || {}).input:
@@ -247,6 +250,7 @@ export class events {
 			case (evt.match(/select/) || {}).input:			
 			case (evt.match(/dragstart/) || {}).input:	
 			case (evt.match(/dragover/) || {}).input:	
+			case (evt.match(/dragend/) || {}).input:
 			case (evt.match(/drop/) || {}).input:			
 				if(this.evtList.indexOf(ev.toLowerCase()) == -1) {
 					throw 'Event '+ev.toUpperCase()+' does not exist.'
@@ -295,6 +299,7 @@ export class events {
 		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
+			case (evt.match(/blur/) || {}).input:
 			case (evt.match(/click/) || {}).input:
 			case (evt.match(/dblclick/) || {}).input:
 			case (evt.match(/mousemove/) || {}).input:
@@ -307,7 +312,8 @@ export class events {
 			case (evt.match(/change/) || {}).input:
 			case (evt.match(/select/) || {}).input:
 			case (evt.match(/dragstart/) || {}).input:	
-			case (evt.match(/dragover/) || {}).input:	
+			case (evt.match(/dragover/) || {}).input:
+			case (evt.match(/dragend/) || {}).input:	
 			case (evt.match(/drop/) || {}).input:	
 				if(this.collectEventsOrig[own][evt] == undefined) {
 					throw 'Event '+ev+' does not exists in element '+el.tagName+' '+own
@@ -350,6 +356,7 @@ export class events {
 		let evt = ev.toLowerCase(), e = ev.replace(/(before|after)/, ''), own = el.Own()
 		switch(evt) {
 			case (evt.match(/focus/) || {}).input:
+			case (evt.match(/blur/) || {}).input:
 			case (evt.match(/click/) || {}).input:
 			case (evt.match(/dblclick/) || {}).input:
 			case (evt.match(/mousemove/) || {}).input:
@@ -363,6 +370,7 @@ export class events {
 			case (evt.match(/select/) || {}).input:
 			case (evt.match(/dragstart/) || {}).input:	
 			case (evt.match(/dragover/) || {}).input:	
+			case (evt.match(/dragend/) || {}).input:
 			case (evt.match(/drop/) || {}).input:	
 				if(this.collectEventsOrig[own][evt] == undefined) {
 					throw 'Unset event: Event '+ev+' does not exists in element '+el.tagName+' '+own

@@ -33,6 +33,8 @@ export class ajvi extends events {
 		HTMLElement.prototype.Css = this.setCss
 		HTMLElement.prototype.CssRemove = this.removeCss
 		HTMLElement.prototype.CssContain = this.containsCss
+		HTMLElement.prototype.Toggle = this.toggleCss
+		HTMLElement.prototype.Attr = this.setAttributes
 		HTMLElement.prototype.Store = this.setElementStore
 		HTMLElement.prototype.HasEvent = this.getElementEvent
 		HTMLElement.prototype.SetEvent = this.setElementEvent
@@ -44,7 +46,8 @@ export class ajvi extends events {
 		HTMLElement.prototype.Childrens = this.getChildrens
 		HTMLElement.prototype.Prev = this.getPrevSibling
 		HTMLElement.prototype.Next = this.getNextSibling
-		HTMLElement.prototype.Selector = this.getSelector
+		HTMLElement.prototype.Select = this.getSelector
+		HTMLElement.prototype.SelectAll = this.getSelectorAll
 		HTMLElement.prototype.Own = this.setOwner
 		HTMLElement.prototype.Index = this.getElementIndex
 	}
@@ -219,7 +222,7 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.insertAdjacentElement('beforebegin', this)
 					return this
 				}
 				if(document.getElementById(el)) {
@@ -250,7 +253,7 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.insertAdjacentElement('afterbegin', this)
 					return this
 				}
 				if(document.getElementById(el)) {
@@ -281,7 +284,7 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.insertAdjacentElement('beforeend', this)
 					return this
 				}
 				if(document.getElementById(el)) {
@@ -312,7 +315,7 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.insertAdjacentElement('afterend', this)
 					return this
 				}
 				if(document.getElementById(el)) {
@@ -343,28 +346,28 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.parentNode.insertBefore(this, el)
 					return this
 				}
 				if(document.getElementById(el)) {
-					document.getElementById(el).insertBefore(this, document.getElementById(el))
+					document.getElementById(el).parentNode.insertBefore(this, document.getElementById(el))
 					return this
 				}
 				if(document.querySelector(el)) {
-					document.querySelector(el).insertBefore(this, document.querySelector(el))
+					document.querySelector(el).parentNode.insertBefore(this, document.querySelector(el))
 				}
 			})
 		} else {
 			if(el instanceof Element) {
-				el.insertBefore(this, el)
+				el.parentNode.insertBefore(this, el)
 				return this
 			}
 			if(document.getElementById(el)) {
-				document.getElementById(el).insertBefore(this, document.getElementById(el))
+				document.getElementById(el).parentNode.insertBefore(this, document.getElementById(el))
 				return this
 			}
 			if(document.querySelector(el)) {
-				document.querySelector(el).insertBefore(this, document.querySelector(el))
+				document.querySelector(el).parentNode.insertBefore(this, document.querySelector(el))
 			}
 		}
 		return this
@@ -374,28 +377,28 @@ export class ajvi extends events {
 		if(document.readyState != 'complete') {
 			window.addEventListener('load', e => {	
 				if(el instanceof Element) {
-					el.appendChild(this)
+					el.parentNode.replaceChild(this, el)
 					return this
 				}
 				if(document.getElementById(el)) {
-					document.getElementById(el).parentNode.replaceChil(this, document.getElementById(el))
+					document.getElementById(el).parentNode.replaceChild(this, document.getElementById(el))
 					return this
 				}
 				if(document.querySelector(el)) {
-					document.querySelector(el).parentNode.replaceChil(this, document.querySelector(el))
+					document.querySelector(el).parentNode.replaceChild(this, document.querySelector(el))
 				}
 			})
 		} else {
 			if(el instanceof Element) {
-				el.insertBefore(this, el)
+				el.parentNode.replaceChild(this, el)
 				return this
 			}
 			if(document.getElementById(el)) {
-				document.getElementById(el).parentNode.replaceChil(this, document.getElementById(el))
+				document.getElementById(el).parentNode.replaceChild(this, document.getElementById(el))
 				return this
 			}
 			if(document.querySelector(el)) {
-				document.querySelector(el).parentNode.replaceChil(this, document.querySelector(el))
+				document.querySelector(el).parentNode.replaceChild(this, document.querySelector(el))
 			}
 		}
 		return this
@@ -442,6 +445,19 @@ export class ajvi extends events {
 
 	containsCss(css) {
 		return this.classList.contains(css)
+	}
+
+	toggleCss(cls) {
+		this.classList.toggle(cls)
+		return this
+	}
+
+	setAttributes(attr, val) {
+		if(!val) {
+			return this.getAttribute(attr)
+		}
+		this.setAttribute(attr, val)
+		return this
 	}
 
 	setElementStore(store) {
@@ -507,6 +523,10 @@ export class ajvi extends events {
 
 	getSelector(selector) {
 		return this.querySelector(selector)
+	}
+
+	getSelectorAll(selector) {
+		return this.querySelectorAll(selector)
 	}
 
 	getElementIndex() {

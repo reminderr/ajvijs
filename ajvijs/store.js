@@ -250,6 +250,11 @@ export class store {
 				break
 			}
 			this._save.params = frmData
+		} else {
+			Object.keys(this._save.params).forEach(param => {
+				frmData.append(param, this._save.params[param])
+			})
+			this._save.params = frmData
 		}
 		this.request(this.xhrSave, this._save).then(data => {
 			if(this.targetstores.length) {
