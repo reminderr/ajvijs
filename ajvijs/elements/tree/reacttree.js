@@ -11,54 +11,20 @@ class TreeView extends Component {
 
   		this.settings = {}
 
-		if(this.props.store) {
-			this.settings.store = this.props.store
-		}
-		if(this.props.autoload) {
-			this.settings.autoload = this.props.autoload
-		}
-		if(this.props.checkboxes) {
-			this.settings.checkboxes = this.props.checkboxes
-		}
-		if(this.props.editable) {
-			this.settings.editable = this.props.editable
-		}
-		if(this.props.draggable) {
-			this.settings.draggable = this.props.draggable
-		}
-		if(this.props.cross) {
-			this.settings.cross = this.props.cross
-		}
-		if(this.props.arrows) {
-			this.settings.arrows = this.props.arrows
-		}
-		if(this.props.lines) {
-			this.settings.lines = this.props.lines
-		}
-		if(this.props.classList) {
-			this.settings.classList = this.props.classList
-		}
-		if(this.props.expanded) {
-			this.settings.expanded = this.props.expanded
-		}
-		if(this.props.imgpath) {
-			this.settings.imgpath = this.props.imgpath
-		}
-		if(this.props.imgstatic) {
-			this.settings.imgstatic = this.props.imgstatic
-		}
+		Object.keys(this.props).forEach(prop => {
+			this.settings[prop] = this.props[prop]
+		})
 
   	}
 
 	componentDidMount() {
 
-		this.settings.container = this.div
-
 		if(this.props.store && this.props.fillsource) {
-			this.tree[this.props.store] = this.store.bind(this)
-		}
+	    	this.ajvi[this.settings.store] = this.setStore.bind(this);
+	    }
 
-		this.tree = this.tree.createTree(this.settings, this.props.events)
+	    this.ajvi.TreeView(this.settings, this.props.events);
+	    this.ajvi[this.settings.name].view.At(this.div);
 
 	}
 

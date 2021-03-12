@@ -1,6 +1,6 @@
 {
   "name": "ajvijsmvc",
-  "version": "0.0.0154",
+  "version": "0.0.0155",
   "description": "AjviJS cross control store focused framework",
   "main": "abstract.js",
   "scripts": {
