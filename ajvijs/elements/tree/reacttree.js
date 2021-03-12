@@ -7,24 +7,18 @@ class TreeView extends Component {
 
   		super(props)
 
-  		this.tree = new ajvi()
-
-  		this.settings = {}
-
-		Object.keys(this.props).forEach(prop => {
-			this.settings[prop] = this.props[prop]
-		})
+  		this.ajvi = new ajvi
 
   	}
 
 	componentDidMount() {
 
 		if(this.props.store && this.props.fillsource) {
-	    	this.ajvi[this.settings.store] = this.setStore.bind(this);
+	    	this.ajvi[this.props.store] = this.setStore.bind(this);
 	    }
 
-	    this.ajvi.TreeView(this.settings, this.props.events);
-	    this.ajvi[this.settings.name].view.At(this.div);
+	    this.ajvi.TreeView(this.props, this.props.events);
+	    this.ajvi[this.props.name].view.At(this.div);
 
 	}
 
