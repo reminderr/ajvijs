@@ -567,7 +567,7 @@ export class ajvi extends events {
 
 	createList(settings, protos) {
 		protos && Object.keys(protos).forEach(proto => list.prototype[proto] = protos[proto])
-		return new list(this, 0, 0, 0, settings)
+		this[settings['name']] = new list(this, 0, 0, 0, settings)
 	}
 
 	TreeView(settings, protos) {
